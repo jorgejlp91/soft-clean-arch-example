@@ -1,0 +1,84 @@
+buildscript {
+    ext {
+        lombokVersion = '1.18.8'
+        springCloudVersion = 'Greenwich.SR2'
+        groovyVersion = '2.5.7'
+        spockVersion = '1.3-groovy-2.5'
+        postgresqlVersion = '42.2.6'
+        simpleFlatMapperVersion = '7.0.0'
+        liquibaseVersion = '3.7.0'
+    }
+    dependencies {
+        classpath 'io.spring.gradle:dependency-management-plugin'
+    }
+}
+
+plugins {
+    id 'org.springframework.boot' version '2.1.6.RELEASE'
+    id 'com.palantir.docker' version '0.22.1'
+    id 'com.palantir.docker-run' version '0.22.1'
+    id 'java'
+    id 'groovy'
+    id 'jacoco'
+    id 'com.avast.gradle.docker-compose' version '0.9.4'
+    id 'pl.allegro.tech.build.axion-release' version '1.10.2'
+    id 'org.owasp.dependencycheck' version '5.2.0'
+    id 'org.liquibase.gradle' version '2.0.1'
+    id 'com.gradle.build-scan' version '2.3'
+}
+
+apply plugin: 'java'
+apply plugin: 'io.spring.dependency-management'
+
+group = 'br.com.app'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+targetCompatibility = '11'
+
+repositories {
+    mavenCentral()
+
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-actuator',
+            'org.springframework.boot:spring-boot-starter-web',
+            'org.springframework.boot:spring-boot-starter-undertow',
+            "org.springframework.boot:spring-boot-starter-logging"
+
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+    implementation "org.postgresql:postgresql:${postgresqlVersion}"
+    implementation "org.simpleflatmapper:sfm-springjdbc:${simpleFlatMapperVersion}"
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation "org.spockframework:spock-core:${spockVersion}"
+    testImplementation "org.spockframework:spock-spring:${spockVersion}"
+    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+    testCompile 'com.tngtech.archunit:archunit:0.11.0'
+}
+
+configurations {
+    // exclude Tomcat
+    compile.exclude module: 'spring-boot-starter-starter-tomcat'
+
+}
+
+//Build Scan
+buildScan {
+    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+    termsOfServiceAgree = 'yes'
+}
+

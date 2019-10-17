@@ -1,0 +1,52 @@
+info:
+  app:
+    name: soft-clean-arch-example
+    description: Soft Clean Arch Application Description
+
+server:
+  port: 8080
+  http2: # Enable HTTP/2 support
+    enabled: true
+  compression: # Server compression
+    enabled: true
+    min-response-size: 2048
+    mime-types: application/json
+api:
+  versionV1: v1
+
+spring:
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        ddl-auto: none # turn off the hibernate auto-creation of the tables from the entity objects
+        show-sql: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/dbtest
+    username: postgres
+    password: admin
+    hikari:
+      maximum-pool-size: 5
+      pool-name: pocPool
+      connection-timeout: 20000
+      max-lifetime: 1600000
+  messages:
+    # basename supports comma-separated list of locations,
+    # either a package qualifier or a resource resolved from the classpath root.
+    basename: messages.*
+    encoding: UTF-8
+
+  # Disable liquibase migration on application startup
+  liquibase:
+    enabled: false
+
+# Logging
+logging:
+  path: log
+  file: ${logging.path}/${info.app.name}.log
+
+# Custom Settings
+app:
+  base-package: br.com.app.*
+
+
